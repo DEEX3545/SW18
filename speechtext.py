@@ -1,17 +1,10 @@
 import speech_recognition as sr
 import pyaudio
 import wave
-from google.cloud import language
 from google.cloud import language_v1beta2
-import six
 from google.cloud.language_v1beta2 import enums
 
-#from google.cloud.language_v1 import types
 from google.cloud.language_v1beta2 import types
-from google.cloud import language_v1
-#from google.cloud.language import types
-
-import wikipediaapi as wk
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/Users/Shumpu/Downloads/google/My Project-455e0b88df87.json"
@@ -91,69 +84,3 @@ try:
 except:
     print('failed')
 
-
-
-'''
-
-def classify_text(text):
-    """Classifies content categories of the provided text."""
-    print('1')
-    client = language_v1.LanguageServiceClient(credentials="AIzaSyD3g1LoWHLAzpZ44phjhuSHGbi-ng1A7NQ")
-    print('2')
-
-    if isinstance(text, six.binary_type):
-        print('3')
-        text = text.decode('utf-8', 'strict')
-        print('3.5')
-
-
-    print('4')
-    document = language_v1.types.Document(
-        content=text.encode('utf-8'),
-        type=enums.Document.Type.PLAIN_TEXT)
-
-    print('5')
-    categories = client.classify_text(document).categories
-
-    print('6')
-    for category in categories:
-        print(u'=' * 20)
-        print(u'{:<16}: {}'.format('name', category.name))
-        print(u'{:<16}: {}'.format('confidence', category.confidence))
-
-'''
-'''
-def classify(text, verbose=True):
-    """Classify the input text into categories. """
-
-    print('1')
-
-    language_client = language_v1.LanguageServiceClient(credentials='AIzaSyD3g1LoWHLAzpZ44phjhuSHGbi-ng1A7NQ')
-
-    print('2')
-
-    document = language_v1.types.Document(
-        content=text,
-        type=language.enums.Document.Type.PLAIN_TEXT)
-    response = language_client.classify_text(document)
-    categories = response.categories
-
-    print('3')
-    result = {}
-
-    for category in categories:
-        # Turn the categories into a dictionary of the form:
-        # {category.name: category.confidence}, so that they can
-        # be treated as a sparse vector.
-        result[category.name] = category.confidence
-
-    if verbose:
-        print(text)
-        for category in categories:
-            print(u'=' * 20)
-            print(u'{:<16}: {}'.format('category', category.name))
-            print(u'{:<16}: {}'.format('confidence', category.confidence))
-
-    return result
-
-'''
