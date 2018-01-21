@@ -16,17 +16,34 @@ on = True
 #AIzaSyD3g1LoWHLAzpZ44phjhuSHGbi-ng1A7NQ
 #credentials="AIzaSyC0ueTFpiKw40rXgZaWJyle_dW_t3sddnU"
 def classi(text):
-    print('1')
+   # print('1')
     language_client = language_v1beta2.LanguageServiceClient()
 
-    print('2')
+   # print('2')
     document = types.Document(content=text, type = enums.Document.Type.PLAIN_TEXT)
-    print('3')
+   # print('3')
 
     result = language_client.classify_text(document)
-    print(4)
+   # print(4)
 
-    return result.categories
+
+    ffa = result.categories
+
+    #print(ffa)
+
+    ar = ['', '']
+
+
+    counter = 0
+    for category in ffa:
+
+        ar[0] = category.name
+        ar[1] = category.confidence
+       # print(ar)
+        break
+
+
+    return ar
 
 
 r = sr.Recognizer()
@@ -74,7 +91,16 @@ def record():
     return audio
 
 
+def cleanstring(s):
 
+    a = 0
+    b = s
+    for f in range(len(b)):
+        if b[f] == '/':
+            b.replace('/', '')
+
+    #b.replace('/', '')
+    return b
 
 
 
@@ -87,35 +113,50 @@ topic = input("Topic: ")
 
 
 
-
+listening = True
 
 while(on):
 
 
-    audio = record()
 
-    with sr.AudioFile(audio) as source:
+    while(listening):
 
-        print("Say")
-        audio = r.record(source)
-        print('done')
+        try:
 
-    try:
+            toParse = ''
 
-        asdf = r.recognize_google(audio)
-        print("google thinks you said: \n" + asdf)
+            print(cleanstring('/Science'))
+            bee = classi("Chemistry is often called the central science because it deals with elements in both Physics and in Biology. Due to this, chemistry is often a hard subject to study and deal with. One of the reasons is that there is so much memorization and sometimes so much math involved, even calculus.")
 
-        ffa = classi(asdf)
+            print('category name: ', bee[0])
+            print('category confidence: ', bee[1], '\n')
 
-        for category in ffa:
-            print('category name: ', category.name)
-            print('category confidence: ', category.confidence, '\n')
+            for f in range(3):
+                audio = record()
 
-    except:
+                with sr.AudioFile(audio) as source:
 
-        print('failed')
+                    print("-O-")
+                    audio = r.record(source)
+                    print('-_-')
+                asdf = r.recognize_google(audio)
+                toParse += asdf
+
+            # bee = classi(toParse)
 
 
-    finally:
+            #asdf = r.recognize_google(audio)
 
-        on = True
+            print("google thinks you said: \n" + toParse)
+
+            classi(toParse)
+
+
+        except:
+
+            print('failed')
+
+
+        finally:
+
+            on = True
