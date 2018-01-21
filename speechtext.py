@@ -149,9 +149,6 @@ while(on):
         try:
 
 
-
-
-
             for f in range(3):
                 audio = record()
 
@@ -190,6 +187,8 @@ while(on):
 
 
 
+
+
         except:
 
             toParse += ''
@@ -199,10 +198,11 @@ while(on):
         finally:
 
             on = True
-
-        thing = interval / 30
-        if counter >= thing:
-            play_sound()
-            counter = 0
-            break
-
+            thing = interval / 30
+            print(thing)
+            print(counter)
+            if counter >= thing:
+                print(counter)
+                play_sound()
+                counter = 0
+                break
