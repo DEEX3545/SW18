@@ -3,11 +3,9 @@ import pyaudio
 import wave
 import math
 
-
 from google.cloud import language_v1beta2
 from google.cloud.language_v1beta2 import enums
 from google.cloud.language_v1beta2 import types
-
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/Users/Shumpu/Downloads/google/My Project-455e0b88df87.json"
 
@@ -126,6 +124,7 @@ def play_sound():
     stream.close()
     p.terminate()
 
+#def isMatch(topic):
 
 
 #----------------------------------------------------
@@ -133,8 +132,8 @@ def play_sound():
 print("Hello, you are using DeStract. To begin, please enter the category you are about to discuss: ")
 topic = input("Topic: ")
 
-
-
+print("Choose the interval of time passed in which you are off topic that it will sound the alarm: ")
+interval = int(input())
 
 
 listening = True
@@ -143,12 +142,14 @@ while(on):
 
 
 
+    counter = 0
     while(listening):
 
+        toParse = ''
         try:
 
 
-            toParse = ''
+
 
 
             for f in range(3):
@@ -156,9 +157,8 @@ while(on):
 
                 with sr.AudioFile(audio) as source:
 
-                    print(":o")
+
                     audio = r.record(source)
-                    print(':|')
                 asdf = r.recognize_google(audio)
                 toParse += asdf
 
@@ -173,24 +173,36 @@ while(on):
                 continue
 
             else:
-
+                print(toParse)
+                print(counter)
                 bee = classi(toParse)
 
                 print('category name: ', bee[0])
                 print('category confidence: ', bee[1], '\n')
 
                 if topic != bee[0]:
-                    play_sound()
-                    play_sound()
-                    break
+                    counter += 1
+                    print(counter)
+                    continue
+                else:
+                    counter -=1
+
 
 
 
         except:
 
-            print('failed')
+            toParse += ''
+            continue
 
 
         finally:
 
             on = True
+
+        thing = interval / 30
+        if counter >= thing:
+            play_sound()
+            counter = 0
+            break
+
