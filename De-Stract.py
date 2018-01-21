@@ -12,9 +12,6 @@ from google.cloud.language_v1beta2 import types
 
 import os
 
-theChoice = ''
-
-
 class MainWindow:
     def __init__(self, master):
         self.master = master
@@ -72,17 +69,12 @@ class Page1:
         exit.pack()
 
         def userchoice(choices):
+            thechoice = ''
             choice = choices.curselection()
-            for i in choice:
-                print(choices.get(i))
-                theChoice = choices.get(i)
-            main(theChoice)
-            win = Toplevel()
-            # display message
-            message = "De-stract is running..."
-            Label(win, text=message).pack()
-            Button(win, text='End Session', height=10, width=15, background="black", foreground="white",
-                   command=win.destroy).pack(side=TOP, pady=10)
+            thechoice = choices.get(choice)
+            print(thechoice)
+            main('/Science/' + thechoice)
+
 
 
 root = Tk()
@@ -127,7 +119,7 @@ def record():
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
     RATE = 44100
-    RECORD_SECONDS = 15
+    RECORD_SECONDS = 10
     WAVE_OUTPUT_FILENAME = "C:/Users/Shumpu/PycharmProjects/machine learning/tensorlfowstuff/audio.wav"
 
     p = pyaudio.PyAudio()
@@ -212,7 +204,7 @@ def longestSubstringFinder(topic, string2):
                 match = ""
 
     if (
-            topic.lower() == 'chemistry' or topic.lower() == 'physics' or topic.lower() == 'biology') and string2.lower() == '/science/chemistry' or string2.lower() == '/science/biological sciences' or string2.lower() == '/science/physics' or string2.lower == '/science':
+            topic.lower() == 'chemistry' or topic.lower() == 'physics' or topic.lower() == 'mathematics' or topic.lower() == 'biology') and string2.lower() == '/science/chemistry' or string2.lower() == '/science/biological sciences' or string2.lower() == '/science/physics' or string2.lower() == '/science/mathematics'  or string2.lower == '/science':
         return True
     else:
         return (len(answer) > 3)
@@ -230,14 +222,26 @@ def main(topic):
     interval = int(input())"""
     listening = True
     while (on):
+        win = Toplevel()
+        # display message
+        message = "De-stract is running..."
+        Label(win, text=message).pack()
 
+        def off():
+            on = False
+        Button(win, text='End Session', background="light green", foreground="black",
+               command=off()).pack(side=TOP, pady=10)
+        if not on:
+            win.destroy()
+
+        root.update()
         counter = 0
         while (listening):
 
             toParse = ''
             try:
 
-                for f in range(2):
+                for f in range(3):
                     audio = record()
 
                     with sr.AudioFile(audio) as source:
@@ -245,6 +249,8 @@ def main(topic):
                     asdf = r.recognize_google(audio)
                     toParse += asdf
                     print(toParse)
+                    if(len(toParse) < 20):
+                        f = 1
 
                 # bee = classi(toParse)
 
@@ -279,7 +285,7 @@ def main(topic):
 
             finally:
 
-                on = True
+                #on = True
                 print(counter)
                 if counter >= 1:
                     print(counter)
