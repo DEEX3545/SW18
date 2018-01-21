@@ -6,6 +6,10 @@ import math
 from google.cloud import language_v1beta2
 from google.cloud.language_v1beta2 import enums
 from google.cloud.language_v1beta2 import types
+
+
+
+
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/Users/Shumpu/Downloads/google/My Project-455e0b88df87.json"
 
@@ -124,7 +128,24 @@ def play_sound():
     stream.close()
     p.terminate()
 
-#def isMatch(topic):
+def longestSubstringFinder(string1, string2):
+    answer = ""
+    len1, len2 = len(string1), len(string2)
+    for i in range(len1):
+        match = ""
+        for j in range(len2):
+            if (i + j < len1 and string1[i + j] == string2[j]):
+                match += string2[j]
+            else:
+                if (len(match) > len(answer)): answer = match
+                match = ""
+
+    if (topic.lower() == 'chemistry' or topic.lower() == 'physics' or topic.lower() == 'biology') and string2.lower()=='/science/chemistry' or string2.lower()=='/science/biology' or string2.lower()=='/science/physics' or string2.lower =='/science':
+        return True
+    else:
+        return (len(answer) > 2)
+
+
 
 
 #----------------------------------------------------
@@ -177,7 +198,7 @@ while(on):
                 print('category name: ', bee[0])
                 print('category confidence: ', bee[1], '\n')
 
-                if topic != bee[0]:
+                if longestSubstringFinder(topic, bee[0]) == False:
                     counter += 1
                     print(counter)
                     continue
