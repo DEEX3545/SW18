@@ -1,13 +1,16 @@
 import speech_recognition as sr
 import pyaudio
 import wave
+
+
 from google.cloud import language_v1beta2
 from google.cloud.language_v1beta2 import enums
-
 from google.cloud.language_v1beta2 import types
 
 import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="C:/Users/Shumpu/Downloads/google/My Project-455e0b88df87.json"
+
+on = True
 
 #'''credentials="AIzaSyD3g1LoWHLAzpZ44phjhuSHGbi-ng1A7NQ"'''
 #AIzaSyD3g1LoWHLAzpZ44phjhuSHGbi-ng1A7NQ
@@ -22,65 +25,97 @@ def classi(text):
 
     result = language_client.classify_text(document)
     print(4)
-    for category in result.categories:
-        print('category name: ', category.name)
-        print('category confidence: ', category.confidence, '\n')
+
+    return result.categories
 
 
 r = sr.Recognizer()
 
-CHUNK = 1024
-FORMAT = pyaudio.paInt16
-CHANNELS = 2
-RATE = 44100
-RECORD_SECONDS = 15
-WAVE_OUTPUT_FILENAME = "C:/Users/Shumpu/PycharmProjects/machine learning/tensorlfowstuff/audio.wav"
+def record():
 
-p = pyaudio.PyAudio()
+    CHUNK = 1024
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 2
+    RATE = 44100
+    RECORD_SECONDS = 10
+    WAVE_OUTPUT_FILENAME = "C:/Users/Shumpu/PycharmProjects/machine learning/tensorlfowstuff/audio.wav"
 
-stream = p.open(format=FORMAT,
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                frames_per_buffer=CHUNK)
+    p = pyaudio.PyAudio()
 
-print("* recording")
+    stream = p.open(format=FORMAT,
+                 channels=CHANNELS,
+                 rate=RATE,
+                 input=True,
+                 frames_per_buffer=CHUNK)
 
-frames = []
+    print("* recording")
 
-for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-    data = stream.read(CHUNK)
-    frames.append(data)
+    frames = []
 
-print("* done recording")
+    for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+     data = stream.read(CHUNK)
+     frames.append(data)
 
-stream.stop_stream()
-stream.close()
-p.terminate()
+    print("* done recording")
 
-wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-wf.setnchannels(CHANNELS)
-wf.setsampwidth(p.get_sample_size(FORMAT))
-wf.setframerate(RATE)
-wf.writeframes(b''.join(frames))
-wf.close()
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+
+    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    wf.setnchannels(CHANNELS)
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    wf.setframerate(RATE)
+    wf.writeframes(b''.join(frames))
+    wf.close()
 
 
-audio = 'audio.wav'
+    audio = 'audio.wav'
+    return audio
 
-with sr.AudioFile(audio) as source:
-    print("Say")
-  #  audio = r.listen(source, phrase_time_limit=10)
-    audio = r.record(source)
-    print('done')
 
-try:
 
-    asdf = r.recognize_google(audio)
-    print("google thinks you said: \n" + asdf)
 
-    classi(asdf)
 
-except:
-    print('failed')
 
+#----------------------------------------------------
+
+print("Hello, you are using DeStract. To begin, please enter the category you are about to discuss: ")
+topic = input("Topic: ")
+
+
+
+
+
+
+
+while(on):
+
+
+    audio = record()
+
+    with sr.AudioFile(audio) as source:
+
+        print("Say")
+        audio = r.record(source)
+        print('done')
+
+    try:
+
+        asdf = r.recognize_google(audio)
+        print("google thinks you said: \n" + asdf)
+
+        ffa = classi(asdf)
+
+        for category in ffa:
+            print('category name: ', category.name)
+            print('category confidence: ', category.confidence, '\n')
+
+    except:
+
+        print('failed')
+
+
+    finally:
+
+        on = True
