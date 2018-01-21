@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyaudio
 import wave
+import math
 
 
 from google.cloud import language_v1beta2
@@ -91,16 +92,39 @@ def record():
     return audio
 
 
-def cleanstring(s):
+def play_sound():
+    PyAudio = pyaudio.PyAudio  # initialize pyaudio
 
-    a = 0
-    b = s
-    for f in range(len(b)):
-        if b[f] == '/':
-            b.replace('/', '')
+    # See https://en.wikipedia.org/wiki/Bit_rate#Audio
+    BITRATE = 16000  # number of frames per second/frameset.
 
-    #b.replace('/', '')
-    return b
+    FREQUENCY = 500  # Hz, waves per second, 261.63=C4-note.
+    LENGTH = 1  # seconds to play sound
+
+    if FREQUENCY > BITRATE:
+        BITRATE = FREQUENCY + 100
+
+    NUMBEROFFRAMES = int(BITRATE * LENGTH)
+    RESTFRAMES = NUMBEROFFRAMES % BITRATE
+    WAVEDATA = ''
+
+    # generating wawes
+    for x in range(NUMBEROFFRAMES):
+        WAVEDATA = WAVEDATA + chr(int(math.sin(x / ((BITRATE / FREQUENCY) / math.pi)) * 127 + 128))
+
+    for x in range(RESTFRAMES):
+        WAVEDATA = WAVEDATA + chr(128)
+
+    p = PyAudio()
+    stream = p.open(format=p.get_format_from_width(1),
+                    channels=1,
+                    rate=BITRATE,
+                    output=True)
+
+    stream.write(WAVEDATA)
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
 
 
@@ -123,22 +147,18 @@ while(on):
 
         try:
 
+
             toParse = ''
 
-            print(cleanstring('/Science'))
-            bee = classi("Chemistry is often called the central science because it deals with elements in both Physics and in Biology. Due to this, chemistry is often a hard subject to study and deal with. One of the reasons is that there is so much memorization and sometimes so much math involved, even calculus.")
-
-            print('category name: ', bee[0])
-            print('category confidence: ', bee[1], '\n')
 
             for f in range(3):
                 audio = record()
 
                 with sr.AudioFile(audio) as source:
 
-                    print("-O-")
+                    print(":o")
                     audio = r.record(source)
-                    print('-_-')
+                    print(':|')
                 asdf = r.recognize_google(audio)
                 toParse += asdf
 
@@ -147,9 +167,23 @@ while(on):
 
             #asdf = r.recognize_google(audio)
 
-            print("google thinks you said: \n" + toParse)
+            print(toParse)
 
-            classi(toParse)
+            if len(toParse) < 20:
+                continue
+
+            else:
+
+                bee = classi(toParse)
+
+                print('category name: ', bee[0])
+                print('category confidence: ', bee[1], '\n')
+
+                if topic != bee[0]:
+                    play_sound()
+                    play_sound()
+                    break
+
 
 
         except:
